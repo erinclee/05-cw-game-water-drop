@@ -11,6 +11,16 @@
         <h1 class="game-title">Water Drop</h1>
         <p class="game-tagline">Catch clean water drops, avoid dirty water!</p>
         
+        <!-- Difficulty Selector -->
+        <div class="difficulty-selector">
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="normal" selected>Normal</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+        
         <div class="score-panel">
             <div class="score">Score: <span id="score">0</span></div>
             <div class="timer">Time: <span id="time">30</span>s</div>
@@ -24,6 +34,18 @@
         
         <div class="message-display" id="message">Click Start to begin your mission!</div>
     </div>
+    
+    <!-- Charity: water Footer -->
+    <footer class="cw-footer">
+        <div class="footer-content">
+            <p>Every drop counts. Learn more about bringing clean water to those in need.</p>
+            <div class="footer-links">
+                <a href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">charity: water Home</a>
+                <a href="https://www.charitywater.org/donate" target="_blank" rel="noopener noreferrer">Donate Now</a>
+                <a href="https://www.charitywater.org/our-projects" target="_blank" rel="noopener noreferrer">Our Projects</a>
+            </div>
+        </div>
+    </footer>
     
     <script src="script.js"></script>
 </body>

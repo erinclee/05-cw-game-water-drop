@@ -1,3 +1,27 @@
+// Difficulty settings
+const difficultySettings = {
+    easy: {
+        timeLimit: 45,
+        dropInterval: 1000,
+        winScore: 100,
+        dropSpeed: { min: 4, max: 6 }
+    },
+    normal: {
+        timeLimit: 30,
+        dropInterval: 800,
+        winScore: 150,
+        dropSpeed: { min: 3, max: 5 }
+    },
+    hard: {
+        timeLimit: 20,
+        dropInterval: 600,
+        winScore: 200,
+        dropSpeed: { min: 2, max: 4 }
+    }
+};
+
+let currentDifficulty = 'normal';
+
 // Game state variables
 let gameRunning = false;
 let dropMaker;
@@ -23,16 +47,27 @@ resetBtn.addEventListener('click', resetGame);
 function startGame() {
     if (gameRunning) return;
     
+    // Get selected difficulty
+    const difficultySelect = document.getElementById('difficulty');
+    currentDifficulty = difficultySelect.value;
+    const settings = difficultySettings[currentDifficulty];
+    
     gameRunning = true;
     startBtn.disabled = true;
     resetBtn.disabled = false;
-    messageEl.textContent = 'Catch the blue drops! Avoid the brown ones!';
+    difficultySelect.disabled = true;
+    
+    // Set time based on difficulty
+    timeLeft = settings.timeLimit;
+    timeEl.textContent = timeLeft;
+    
+    messageEl.textContent = `${currentDifficulty.toUpperCase()} MODE: Catch the blue drops! Avoid the brown ones!`;
     
     // Start timer
     startTimer();
     
-    // Create drops every 800ms (faster than starter for more challenge)
-    dropMaker = setInterval(createDrop, 800);
+    // Create drops based on difficulty interval
+    dropMaker = setInterval(createDrop, settings.dropInterval);
 }
 
 function startTimer() {
@@ -78,8 +113,9 @@ function createDrop() {
     const xPosition = Math.random() * (gameWidth - size);
     drop.style.left = xPosition + 'px';
     
-    // Random fall speed (3-5 seconds)
-    const fallDuration = Math.random() * 2 + 3;
+    // Use difficulty-based fall speed
+    const settings = difficultySettings[currentDifficulty];
+    const fallDuration = Math.random() * (settings.dropSpeed.max - settings.dropSpeed.min) + settings.dropSpeed.min;
     drop.style.animationDuration = `${fallDuration}s`;
     
     // Click handler
@@ -181,14 +217,17 @@ function endGame() {
     // Calculate accuracy
     const accuracy = dropsCreated > 0 ? Math.round((dropsCaught / dropsCreated) * 100) : 0;
     
+    // Get win threshold for current difficulty
+    const winThreshold = difficultySettings[currentDifficulty].winScore;
+    
     // Final message
-    if (score >= 150) {
+    if (score >= winThreshold) {
         messageEl.textContent = `🏆 AMAZING! Score: ${score} | Accuracy: ${accuracy}%`;
         createConfetti();
-    } else if (score >= 100) {
+    } else if (score >= winThreshold * 0.66) {
         messageEl.textContent = `🎊 Great Job! Score: ${score} | Accuracy: ${accuracy}%`;
         createConfetti();
-    } else if (score >= 50) {
+    } else if (score >= winThreshold * 0.33) {
         messageEl.textContent = `👏 Good work! Score: ${score} | Accuracy: ${accuracy}%`;
     } else {
         messageEl.textContent = `Game Over! Score: ${score} | Try again!`;
@@ -216,9 +255,10 @@ function resetGame() {
     const drops = gameContainer.querySelectorAll('.water-drop');
     drops.forEach(drop => drop.remove());
     
-    // Reset buttons
+    // Reset buttons and difficulty selector
     startBtn.disabled = false;
     resetBtn.disabled = true;
+    document.getElementById('difficulty').disabled = false;
 }
 
 function createConfetti() {
